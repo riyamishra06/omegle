@@ -1,76 +1,74 @@
 const express = require("express");
 const app = express();
-const indexRouter = require("./routes/index");
 const path = require("path");
 
 const http = require("http");
 const socketIO = require("socket.io");
-const { log } = require("console");
 const server = http.createServer(app);
 const io = socketIO(server);
 
+const waitingUsers = [];
+const rooms = {};
 
+io.on("connection", (socket) => {
+  socket.on("joinroom", () => {
+    // console.log(socket.id);
+    if (waitingUsers.length > 0) {
+      const partner = waitingUsers.shift();
+      const roomname = `${socket.id}-${partner.id}`;
 
-let waitingusers = [];
-let rooms = {
-    "dnsndnjsdnjndsjnjdnjs": ["nsdjdjjsdjndn","svdxjshbdbdnxsm"]
-}
+      socket.join(roomname);
+      partner.join(roomname);
 
-io.on("connection", function(socket){
-    socket.on("joinroom",function(){
-       if(waitingusers.length > 0){
-        let partner = waitingusers.shift();
-        const roomname = `${socket.id}--${partner.id}`;
-        socket.join(roomname);
-        partner.join(roomname);
-        
-        io.to(roomname).emit("joined", roomname)
-       }else{
-        waitingusers.push(socket);
-       }
-        
-    });
+      io.to(roomname).emit("joined", roomname);
+    } else {
+      waitingUsers.push(socket);
+    }
+  });
 
-    socket.on("signalingMesaage", function (data){
-      socket.broadcast.to(data.room).emit("signalingMessage",data.message)
-    });
+  socket.on("typing", ({ room }) => {
+    socket.broadcast.to(room).emit("typing");
+  });
 
-    socket.on("message",function(data){
-        socket.broadcast.to(data.room).emit("message",data.message)
-    })
+  socket.on("message", (data) => {
+    // console.log(data);
+    socket.broadcast.to(data.room).emit("message", data.message);
+  });
 
-    socket.on("message",function(data){
-        socket.broadcast.to(data.room).emit("message",data.message)
-    })
+  socket.on("signalingMessage", (data) => {
+    // console.log(data);
+    socket.broadcast.to(data.room).emit("signalingMessage", data.message);
+  });
 
-    socket.on("rejectCall",function({room}){
-        socket.broadcast.to(room).emit("Call rejected");
-    })
+  socket.on("startVideoCall", ({ room }) => {
+    socket.broadcast.to(room).emit("incomingCall");
+  });
 
+  socket.on("acceptCall", ({ room }) => {
+    socket.broadcast.to(room).emit("callAccepted");
+  });
 
-    socket.on("acceptCall",function({room}){
-        socket.broadcast.to(room).emit("callAccepted");
-    })
-    socket.on("disconnect",function(){
-       let index =  waitingusers.findIndex(waitingusers => waitingusers.id === socket.id);
-       waitingusers.splice(index,1);
-    })
+  socket.on("rejectCall", ({ room }) => {
+    socket.broadcast.to(room).emit("callRejected");
+  });
 
-})
+  socket.on("disconnect", () => {
+    let index = waitingUsers.findIndex(
+      (waitingUser) => waitingUser.id === socket.id
+    );
+    waitingUsers.splice(index, 1);
+  });
+});
 
-
-// Setting up the view engine to use EJS
 app.set("view engine", "ejs");
-app.use(express.json()); // Corrected: add parentheses to invoke express.json()
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Use the indexRouter for the root route
+const indexRouter = require("./routes");
+
 app.use("/", indexRouter);
 
-// Start the server
-server.listen(3000, () => {
-    console.log("Server is running on port 3000");
-});
+server.listen(process.env.PORT || 3000);
+
+// app.listen(3000);

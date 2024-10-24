@@ -5,11 +5,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #E5E7EB;
+            --text-color: #000000;
+            --leave-btn-bg: rgb(255, 80, 80, 1);
+            --accept-btn-bg: rgb(0, 200, 0, 1);
+            --light-bg: #ffffff;
+            --header-text: #000000;
+            --control-bg: #E5E7EB;
+            --control-text: #000000;
+        }
+
+        .dark-theme {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --leave-btn-bg: rgb(200, 0, 0, 1);
+            --accept-btn-bg: rgb(0, 200, 0, 1);
+            --light-bg: #141313;
+            --header-text: #ffffff;
+            --control-bg: #000000;
+            --control-text: #ffffff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
         #videos {
@@ -20,7 +49,7 @@
         }
 
         .video-player {
-            background-color: black;
+            background-color: var(--bg-color);
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -46,8 +75,6 @@
         }
 
         .control-container {
-            background-color: #6df966;
-            padding: 20px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -55,13 +82,12 @@
             cursor: pointer;
         }
 
-        .control-container svg {
-            height: 30px;
-            width: 30px;
-        }
-
-        #leave-btn {
-            background-color: rgb(255, 80, 80, 1);
+        #theme-toggle {
+            background-color: var(--control-bg);
+            color: var(--control-text);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         @media screen and (max-width: 600px) {
@@ -69,73 +95,68 @@
                 height: 80px;
                 width: 120px;
             }
-
-            .control-container img {
-                height: 20px;
-                width: 20px;
-            }
         }
     </style>
-    <link href="/css/style.css" rel="stylesheet">
 </head>
 
-<body class="flex flex-col h-dvh bg-gray-200">
+<body class="flex flex-col h-[100vh] w-full bg-gray-200">
     <%- include('partials/header') %>
         <div class="fixed videoblock hidden z-[222] w-full h-svh">
             <div id="videos">
-                <video class="video-player" id="localVideo" autoplay muted playsinline></video>
-                <video class="video-player" id="remoteVideo" autoplay playsinline></video>
+                <video class="video-player bg-black" id="localVideo" autoplay muted playsinline></video>
+                <video class="video-player bg-black" id="remoteVideo" autoplay playsinline></video>
             </div>
-            <div id="controls">
-                <div class="control-container" id="cameraButton">
-                    <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M20.525 2.149C20.365 2.05 20.183 2 20 2C19.847 2 19.694 2.035 19.553 2.105L17 3.382V3C17 1.346 15.654 0 14 0H3C1.346 0 0 1.346 0 3V11C0 12.654 1.346 14 3 14H14C15.654 14 17 12.654 17 11V10.618L19.553 11.894C19.694 11.965 19.847 12 20 12C20.183 12 20.365 11.95 20.525 11.851C20.82 11.668 21 11.347 21 11V3C21 2.653 20.82 2.332 20.525 2.149ZM5 8.5C4.171 8.5 3.5 7.829 3.5 7C3.5 6.171 4.171 5.5 5 5.5C5.829 5.5 6.5 6.171 6.5 7C6.5 7.829 5.829 8.5 5 8.5Z"
-                            fill="white" />
-                    </svg>
+            <div id="controls" class="rounded-full bg-zinc-300 p-3">
+                <div class="control-container text-2xl h-14 w-14 bg-black text-white" id="cameraButton">
+                    <i class="ri-video-on-fill"></i>
+                </div>
+                <div class="control-container text-2xl h-14 w-14 bg-black text-white" id="micButton">
+                    <i class="ri-mic-fill"></i>
+                </div>
+                <div class="control-container text-2xl h-14 w-14 bg-red-700 text-white" id="hangup">
+                    <i class="ri-phone-fill"></i>
                 </div>
 
-                <div class="control-container" id="hangup">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="red" />
-                        <path
-                            d="M20 15.5c-.78 0-1.55-.3-2.12-.88l-1.43-1.42a4.007 4.007 0 0 0-5.54 0l-1.43 1.42A2.983 2.983 0 0 1 4 15.5c-.78 0-1.55-.3-2.12-.88A2.983 2.983 0 0 1 1 12.5a2.983 2.983 0 0 1 .88-2.12l7-7a4.007 4.007 0 0 1 5.54 0l7 7c.58.58.88 1.34.88 2.12s-.3 1.55-.88 2.12c-.58.58-1.34.88-2.12.88z" />
-                    </svg>
-                </div>
-
-                <div class="control-container" id="micButton">
-                    <svg width="20" height="20" viewBox="0 0 14 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M7 12.5C8.7 12.5 10 11.2 10 9.5V3.5C10 1.8 8.7 0.5 7 0.5C5.3 0.5 4 1.8 4 3.5V9.5C4 11.2 5.3 12.5 7 12.5ZM12.3 9.5C12.3 12.5 9.8 14.6 7 14.6C4.2 14.6 1.7 12.5 1.7 9.5H0C0 12.9 2.7 15.7 6 16.2V19.5H8V16.2C11.3 15.7 14 12.9 14 9.5H12.3Z"
-                            fill="white" />
-                    </svg>
-                </div>
             </div>
         </div>
-        <div id="incoming-call"
-            class="fixed hidden z-[222] w-full h-dvh bg-gray-900 bg-opacity-75 flex items-center justify-center">
-            <div class="bg-white p-8 rounded-md text-center">
-                <p class="mb-4">Incoming Call...</p>
-                <button id="accept-call" class="bg-green-500 text-white py-2 px-4 rounded-md">Accept</button>
-                <button id="reject-call" class="bg-red-500 text-white py-2 px-4 rounded-md ml-2">Reject</button>
+        <div id="incoming-call" class="fixed hidden z-[222] w-full h-dvh bg-opacity-75 flex items-center justify-center"
+            style="background-color: var(--bg-color);">
+            <div class="p-8 rounded-md text-center"
+                style="background-color: var(--light-bg); color: var(--text-color);">
+                <p class="mb-4 text-blue-600">Incoming Call...</p>
+                <button id="accept-call" class="text-white py-2 px-4 rounded-md"
+                    style="background-color: var(--accept-btn-bg);">Accept</button>
+                <button id="reject-call" class="text-white py-2 px-4 rounded-md ml-2"
+                    style="background-color: var(--leave-btn-bg);">Reject</button>
             </div>
         </div>
-        <main class="flex-1 p-4 overflow-y-auto relative" id="message-container">
+        <div id="outgoing-call" class="fixed hidden z-[222] w-full h-dvh bg-opacity-75 flex items-center justify-center"
+            style="background-color: var(--bg-color);">
+            <div class="p-8 w-[60%] sm:w-fit flex flex-col items-center justify-center rounded-md text-center"
+                style="background-color: var(--light-bg); color: var(--text-color);">
+                <h3 class="mb-2 text-blue-600">Outgoing Call...</h3>
+                <p class="text-center">Waiting for the other user's response...</p>
+            </div>
+        </div>
+        <main class="flex-1 p-4 overflow-y-auto relative" id="message-container"
+            style="background-color: var(--bg-color); color: var(--text-color);">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 text-center nobody"
+                style="color: var(--secondary-text-color);">
+                You're not connected to anyone yet. Please wait—someone will join you soon!
+            </div>
             <div
-                class="text-zinc-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 text-center nobody">
-                bhagwaan kasam koi nahi hai yaha, ruko shaayad koi
-                aajaye.</div>
+                class="absolute hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 text-center text-green-600 somebody">
+                Someone has joined! You can now start a new conversation.
+            </div>
         </main>
-        <form id="chatform" class="bg-white p-4 flex">
+        <form id="chatform" class="p-4 flex" style="background-color: var(--light-bg);">
             <input type="hidden" id="userid" value="">
             <input type="text" id="messagebox"
-                class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="flex-1 border rounded-md px-3 py-2 bg-transparent focus:outline-none sm:text-sm"
                 placeholder="Type a message">
-            <button type="submit"
-                class="ml-2 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">Send</button>
+            <button type="submit" class="ml-2 text-white bg-blue-600 py-2 px-4 rounded-md">Send</button>
         </form>
-        <video id="local-video" class="hidden" autoplay></video>
-        <video id="remote-video" class="hidden" autoplay></video>
+
 
         <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
             integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
@@ -143,26 +164,49 @@
 
         <script>
             const socket = io();
+            let room;
             const chatform = document.querySelector("#chatform");
             const messagebox = document.querySelector("#messagebox");
             const messagecontainer = document.querySelector("#message-container");
+            const hangupButton = document.querySelector("#hangup");
 
-            let room;
+            document.querySelector('#micButton').addEventListener('click', toggleAudio);
+            document.querySelector('#cameraButton').addEventListener('click', toggleVideo);
 
-            socket.emit("joinroom");
+            socket.emit('joinroom');
 
-            socket.on("joined", function (roomname) {
+            socket.on("joined", (roomname) => {
                 room = roomname;
                 document.querySelector(".nobody").classList.add("hidden");
+                setTimeout(() => {
+                    document.querySelector(".somebody").classList.remove("hidden");
+                }, 1000);
+
+                setTimeout(() => {
+                    document.querySelector(".somebody").classList.add("hidden");
+                }, 5000);
+
             })
 
-            socket.on("message", function (message) {
-                receiveMessage(message);
+            socket.on("message", (msg) => {
+                receiveMessage(msg);
             })
 
-            chatform.addEventListener("submit", function (event) {
+            socket.on("typing", () => {
+                // console.log("Typing...");
+                document.querySelector(".typing").classList.remove("hidden");
+                setTimeout(() => {
+                    document.querySelector(".typing").classList.add("hidden");
+                }, 2000);
+            })
+
+            chatform.addEventListener('input', (event) => {
+                socket.emit("typing", { room })
+            })
+
+            chatform.addEventListener('submit', (event) => {
                 event.preventDefault();
-                socket.emit("message", { room: room, message: messagebox.value });
+                socket.emit("message", { room, message: messagebox.value })
                 attachMessage(messagebox.value);
                 messagebox.value = "";
             })
@@ -172,7 +216,7 @@
                 userMessageContainer.classList.add('flex', 'my-2', 'justify-end');
 
                 const userMessageDiv = document.createElement('div');
-                userMessageDiv.classList.add('bg-blue-500', 'text-white', 'p-3', 'rounded-lg', 'max-w-xs');
+                userMessageDiv.classList.add('bg-blue-600', 'text-white', 'px-3', 'py-2', 'rounded-lg', 'max-w-xs');
 
                 const userMessageText = document.createElement('p');
                 userMessageText.textContent = message;
@@ -191,7 +235,7 @@
                 messageContainer.classList.add('flex', 'my-2', 'justify-start');
 
                 const messageDiv = document.createElement('div');
-                messageDiv.classList.add('bg-gray-300', 'text-gray-800', 'p-3', 'rounded-lg', 'max-w-xs');
+                messageDiv.classList.add('bg-zinc-600', 'text-white', 'px-3', 'py-2', 'rounded-lg', 'max-w-xs');
 
                 const messageText = document.createElement('p');
                 messageText.textContent = message;
@@ -205,17 +249,16 @@
             }
 
             // WEBRTC START
+
             let localStream;
             let remoteStream;
             let peerConnection;
             let inCall = false;
 
             const rtcSettings = {
-    iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "turn:your.turn.server", username: "user", credential: "password" }
-    ]
-};
+                iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+            }
+
             const initialize = async () => {
                 socket.on("signalingMessage", handleSignalingMessage);
 
@@ -223,24 +266,26 @@
                     localStream = await navigator.mediaDevices.getUserMedia({
                         audio: true,
                         video: true
-                    })
+                    });
+
                     document.querySelector("#localVideo").srcObject = localStream;
                     document.querySelector("#localVideo").style.display = "block";
 
                     initiateOffer();
 
                     inCall = true;
-                }
-                catch (err) {
-                    console.log("Rejected by browser" + err);
+                } catch (error) {
+                    console.log("Blocked by the browser " + error);
                 }
             }
 
             const initiateOffer = async () => {
                 await createPeerConnection();
+
                 try {
                     const offer = await peerConnection.createOffer();
                     await peerConnection.setLocalDescription(offer);
+
                     socket.emit("signalingMessage", {
                         room,
                         message: JSON.stringify({
@@ -248,9 +293,8 @@
                             offer
                         })
                     })
-                }
-                catch (err) {
-                    console.log("error in creating offer" + err);
+                } catch (error) {
+                    console.log("error in creating offer " + error);
                 }
             }
 
@@ -275,7 +319,7 @@
 
                 peerConnection.onicecandidate = (event) => {
                     if (event.candidate) {
-                        console.log("Sending Ice Candidates");
+                        // console.log("Sending Ice Candidates: ", event.candidate);
 
                         socket.emit("signalingMessage", {
                             room,
@@ -285,100 +329,184 @@
                             })
                         })
                     }
+
                 }
 
-                peerConnection.onconnectionstatechange = () => {
-                    console.log("connection state change hui ", peerConnection.connectionState);
-                }
+                // peerConnection.onconnectionstatechange = () => {
+                //     console.log("Connection state:", peerConnection.connectionState)
+                // }
+                // peerConnection.onicegatheringstatechange = () => {
+                //     console.log('ICE gathering state:', peerConnection.iceGatheringState);
+                // };
+
+                // peerConnection.oniceconnectionstatechange = () => {
+                //     console.log('ICE connection state:', peerConnection.iceConnectionState);
+                // };
             }
 
             const handleSignalingMessage = async (message) => {
-                const { type, offer, answer, candidate } = JSON.parse(message);
-                if (type === "offer") handleOffer(offer);
-                if (type === "answer") handleAnswer(answer);
+                const { type, answer, offer, candidate } = JSON.parse(message);
+                if (type === "offer") { await handleOffer(offer); }
+                if (type === "answer") { await handleAnswer(answer); }
                 if (type === "candidate" && peerConnection) {
-                    try { await peerConnection.addIceCandidate(candidate); }
-                    catch (error) {
+                    try {
+                        // const receivedCandidate = new RTCIceCandidate(candidate);
+                        await peerConnection.addIceCandidate(candidate);
+                    } catch (error) {
                         console.log(error);
                     }
                 }
+
                 if (type === "hangup") {
-                    hangup()
+                    hangup();
                 }
             }
 
             const handleOffer = async (offer) => {
                 await createPeerConnection();
+
                 try {
-                    await peerConnection.setRemoteDescription(offer);
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription({ type: "offer", sdp: offer.sdp }));
+                    // await peerConnection.setRemoteDescription(offer);
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
-                    socket.emit("signalingMessage", { room, message: JSON.stringify({ type: "answer", answer }) });
+                    // console.log('Sending offer:', offer);
+
+                    socket.emit("signalingMessage", {
+                        room,
+                        message: JSON.stringify({
+                            type: "answer",
+                            answer
+                        })
+                    })
+
                     inCall = true;
-                }
-                catch (error) {
-                    console.log("failed to handle offer");
+                } catch (error) {
+                    console.log("failed to handle offer " + error);
                 }
             }
 
             const handleAnswer = async (answer) => {
                 try {
-                    await peerConnection.setRemoteDescription(answer);
-                }
-                catch (error) {
-                    console.log("failed to handle answer");
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: answer.sdp }));
+                    // console.log('Sending answer:', answer);
+                } catch (error) {
+                    console.log("failed to handle answer " + error);
                 }
             }
 
-
-            document.querySelector("#video-call-btn")
-                .addEventListener("click", function () {
-                    socket.emit("startVideoCall", { room })
+            const videoCallButton = document.querySelector("#video-call-btn");
+            if (videoCallButton) {
+                videoCallButton.addEventListener("click", () => {
+                    socket.emit("startVideoCall", { room });
+                    document.querySelector("#outgoing-call").classList.remove("hidden");
                 })
+            }
 
-            socket.on("incomingCall", function () {
-                console.log("hey");
+            socket.on("incomingCall", () => {
                 document.querySelector("#incoming-call").classList.remove("hidden");
             })
 
-            socket.on("callAccepted", function () {
+            socket.on("callAccepted", () => {
                 initialize();
                 document.querySelector(".videoblock").classList.remove("hidden");
+                document.querySelector("#outgoing-call").classList.add("hidden");
             })
 
-            document.querySelector("#accept-call")
-                .addEventListener("click", function () {
+            socket.on("callRejected", () => {
+                document.querySelector("#outgoing-call").classList.add("hidden");
+                const notification = document.createElement("div");
+                notification.textContent = "Call rejected by the other user";
+                notification.classList.add("fixed", "text-center", "top-10", "left-1/2", "transform", "-translate-x-1/2", "bg-red-500", "text-white", "px-4", "py-2", "rounded-md", "shadow-md", "z-50");
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+                document.querySelector("#outgoing-call").classList.add("hidden");
+            })
+
+            const acceptCallButton = document.querySelector("#accept-call");
+            if (acceptCallButton) {
+                acceptCallButton.addEventListener("click", () => {
                     document.querySelector("#incoming-call").classList.add("hidden");
                     initialize();
                     document.querySelector(".videoblock").classList.remove("hidden");
                     socket.emit("acceptCall", { room })
                 })
+            }
 
-            document.querySelector("#reject-call")
-                .addEventListener("click", function () {
+            const rejectCallButton = document.querySelector("#reject-call");
+            if (rejectCallButton) {
+                rejectCallButton.addEventListener("click", () => {
                     document.querySelector("#incoming-call").classList.add("hidden");
                     socket.emit("rejectCall", { room })
                 })
+            }
 
-            socket.on("callRejected", function () {
-                alert("Call rejected by other user");
-            })
+            const cancelCallButton = document.querySelector("#cancel-call");
+            if (cancelCallButton) {
+                cancelCallButton.addEventListener("click", () => {
+                    document.querySelector("#outgoing-call").classList.add("hidden");
+                })
+            }
 
-            document.querySelector("#hangup")
-                .addEventListener("click", function () {
+
+            if (hangupButton) {
+                hangupButton.addEventListener("click", () => {
                     hangup();
                 })
+            }
 
-            function hangup() {
+            const hangup = () => {
                 if (peerConnection) {
                     peerConnection.close();
                     peerConnection = null;
-                    localStream.getTracks().forEach(track => track.stop());
-
+                    if (localStream) {
+                        localStream.getTracks().forEach(track => track.stop());
+                    }
                     document.querySelector(".videoblock").classList.add("hidden");
-                    socket.emit("signalingMessage", { room, message: JSON.stringify({ type: "hangup" }) });
+                    socket.emit("signalingMessage", {
+                        room,
+                        message: JSON.stringify({
+                            type: "hangup"
+                        })
+                    });
                     inCall = false;
                 }
+            }
+
+            function toggleAudio() {
+                const audioTracks = localStream.getAudioTracks();
+                if (audioTracks.length > 0) {
+                    const isEnabled = audioTracks[0].enabled;
+                    audioTracks[0].enabled = !isEnabled;
+                    document.querySelector('#micButton').classList.toggle('muted', isEnabled);
+                    const micIcon = document.querySelector('#micButton i');
+                    if (isEnabled) {
+                        micIcon.classList.replace('ri-mic-fill', 'ri-mic-off-fill');
+                    } else {
+                        micIcon.classList.replace('ri-mic-off-fill', 'ri-mic-fill');
+                    }
+                }
+            }
+
+            function toggleVideo() {
+                const videoTracks = localStream.getVideoTracks();
+                if (videoTracks.length > 0) {
+                    const isEnabled = videoTracks[0].enabled;
+                    videoTracks[0].enabled = !isEnabled;
+                    document.querySelector('#cameraButton').classList.toggle('stopped', isEnabled);
+                    const cameraIcon = document.querySelector('#cameraButton i');
+                    if (isEnabled) {
+                        cameraIcon.classList.replace('ri-video-on-fill', 'ri-video-off-fill');
+                    } else {
+                        cameraIcon.classList.replace('ri-video-off-fill', 'ri-video-on-fill');
+                    }
+                }
+            }
+
+            function toggleTheme() {
+                document.body.classList.toggle('dark-theme');
             }
         </script>
 </body>

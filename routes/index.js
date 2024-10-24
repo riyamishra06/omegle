@@ -1,13 +1,12 @@
 const express = require("express");
-const router = express.Router(); // Use 'router' here instead of 'app'
+const router = express.Router();
 
-router.get("/", function(req, res) {
-    res.render("index"); // Render the 'index' view
+router.get("/", (req, res) => {
+  res.render("index");
 });
 
-router.get("/chat", function(req, res) {
-    res.render("chat"); // Render the 'index' view
+router.get("/chat", (req, res) => {
+  res.render("chat");
 });
 
-
-module.exports = router; // Export the 'router' correctly
+module.exports = router;

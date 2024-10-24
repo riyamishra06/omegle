@@ -1,5 +1,14 @@
-<header class="bg-white shadow p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Chat</h1>
-    <button id="video-call-btn" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Video
-        Call</button>
+<header class="w-full shadow h-[10vh] p-4 flex justify-between items-center"
+    style="background-color: var(--light-bg); color: var(--header-text);">
+    <div id="nav-left" class="flex flex-col items-start justify-center">
+        <h1 class="text-xl font-bold">Chat</h1>
+        <h5 class="typing text-sm hidden font-semibold" style="color: var(--typing-color);">Typing....</h5>
+    </div>
+    <div id="nav-right" class="flex items-center gap-4">
+        <button id="theme-toggle" class="text-xl px-3 py-1 rounded-md" onclick="toggleTheme()">
+            <i class="ri-moon-fill"></i>
+        </button>
+        <button id="video-call-btn" class="py-2 px-4 rounded-md text-white bg-blue-600">Video
+            Call</button>
+    </div>
 </header>
